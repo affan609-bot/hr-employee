@@ -100,13 +100,15 @@ app.use((err, req, res, next) => {
   res.status(status).json({ error: err.message || 'Internal Server Error' });
 });
 
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`========================================`);
-  console.log(`  HCM Lite Backend Server Started!      `);
-  console.log(`  URL: http://127.0.0.1:${PORT}         `);
-  console.log(`  Port: ${PORT}                         `);
-  console.log(`========================================`);
-});
+if (!process.env.VERCEL) {
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`========================================`);
+    console.log(`  HCM Lite Backend Server Started!      `);
+    console.log(`  URL: http://127.0.0.1:${PORT}         `);
+    console.log(`  Port: ${PORT}                         `);
+    console.log(`========================================`);
+  });
+}
 
-// Export the app for Vercel's Express runtime (services mode)
+// Export the app for Vercel Serverless Functions
 export default app;
