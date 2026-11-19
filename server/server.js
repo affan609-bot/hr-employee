@@ -2,7 +2,6 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
-import fs from 'fs';
 import { fileURLToPath } from 'url';
 import bcrypt from 'bcryptjs';
 import { v4 as uuidv4 } from 'uuid';
@@ -26,6 +25,7 @@ dotenv.config(); // root .env
 dotenv.config({ path: path.join(__dirname, '.env') }); // server/.env (optional)
 
 const app = express();
+app.set('trust proxy', 1);
 const PORT = process.env.PORT || 5000;
 
 app.use(cors());
@@ -93,16 +93,6 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Serve built frontend (if present) for single-service hosting
-const distPath = path.join(__dirname, '..', 'dist');
-if (fs.existsSync(distPath)) {
-  app.use(express.static(distPath));
-  app.use((req, res, next) => {
-    if (req.path.startsWith('/api')) return next();
-    res.sendFile(path.join(distPath, 'index.html'));
-  });
-}
-
 // Global Error Handler
 app.use((err, req, res, next) => {
   console.error('API Error:', err);
@@ -110,10 +100,13 @@ app.use((err, req, res, next) => {
   res.status(status).json({ error: err.message || 'Internal Server Error' });
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`========================================`);
   console.log(`  HCM Lite Backend Server Started!      `);
-  console.log(`  URL: http://localhost:${PORT}          `);
+  console.log(`  URL: http://127.0.0.1:${PORT}         `);
   console.log(`  Port: ${PORT}                         `);
   console.log(`========================================`);
 });
+
+// Export the app for Vercel's Express runtime (services mode)
+export default app;

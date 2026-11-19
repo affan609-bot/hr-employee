@@ -1,6 +1,7 @@
-const API_BASE = '/api';
+const BASE_URL = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace(/\/+$/, '') : '';
 
 export const getAuthToken = () => localStorage.getItem('hcm_token');
+export const getToken = getAuthToken;
 
 export const setAuthToken = (token) => {
   if (token) {
@@ -9,6 +10,7 @@ export const setAuthToken = (token) => {
     localStorage.removeItem('hcm_token');
   }
 };
+export const setToken = setAuthToken;
 
 export async function apiRequest(endpoint, options = {}) {
   const token = getAuthToken();
@@ -24,17 +26,23 @@ export async function apiRequest(endpoint, options = {}) {
     headers['Authorization'] = `Bearer ${token}`;
   }
 
+  // Normalize endpoint: ensure it starts with /api
+  const trimmed = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+  const apiPath = trimmed.startsWith('/api/') ? trimmed : `/api${trimmed}`;
+  const targetUrl = `${BASE_URL}${apiPath}`;
+
   let response;
   try {
-    response = await fetch(`${API_BASE}${endpoint}`, {
+    response = await fetch(targetUrl, {
       ...options,
       headers
     });
   } catch (networkErr) {
-    throw new Error('Network error — please check your connection.');
+    console.error('API Network Error:', networkErr);
+    throw new Error('Backend server is not reachable. Please ensure the server is running on port 5000.');
   }
 
-  // On 401, purge stale token
+  // On 401, purge stale token so future requests aren't permanently broken
   if (response.status === 401) {
     if (!endpoint.includes('/auth/login') && !endpoint.includes('/auth/status')) {
       setAuthToken(null);
@@ -42,15 +50,15 @@ export async function apiRequest(endpoint, options = {}) {
   }
 
   // Handle binary PDF download
-  const contentType = response.headers.get('content-type');
-  if (contentType && contentType.includes('application/pdf')) {
+  const contentType = response.headers.get('content-type') || '';
+  if (contentType.includes('application/pdf')) {
     if (!response.ok) {
       throw new Error('Failed to download PDF.');
     }
     return response.blob();
   }
 
-  if (contentType && contentType.includes('text/csv')) {
+  if (contentType.includes('text/csv')) {
     if (!response.ok) {
       throw new Error('Failed to export CSV.');
     }
@@ -60,10 +68,18 @@ export async function apiRequest(endpoint, options = {}) {
   // Safely parse response — text first, then try JSON
   const text = await response.text();
   let data = null;
-  try { data = text ? JSON.parse(text) : null; } catch { data = text; }
+  try {
+    data = text ? JSON.parse(text) : null;
+  } catch {
+    data = text;
+  }
 
   if (!response.ok) {
-    const message = (data && data.error) || (typeof data === 'string' && data.length < 200 ? data : `Request failed (${response.status})`);
+    const message = (data && data.error)
+      ? data.error
+      : (typeof data === 'string' && data.length < 200 && !data.includes('<!doctype')
+          ? data
+          : `Request failed with status ${response.status}`);
     const error = new Error(message);
     error.status = response.status;
     error.data = data;

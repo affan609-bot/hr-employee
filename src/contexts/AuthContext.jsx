@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
-import { api, setToken, getToken } from '../lib/api.js';
+import { api, setAuthToken, getAuthToken } from '../api.js';
 
 const AuthContext = createContext(null);
 
@@ -10,27 +10,41 @@ export function AuthProvider({ children }) {
   const [setupStatus, setSetupStatus] = useState(null);
 
   async function refreshStatus() {
-    const status = await api('/auth/status');
-    setSetupStatus(status);
-    return status;
+    try {
+      const status = await api.getSystemStatus();
+      setSetupStatus(status);
+      return status;
+    } catch (err) {
+      console.warn('System status check warning:', err.message);
+      // Fallback: assume system needs setup if status check fails
+      const fallback = { isSetup: false };
+      setSetupStatus(fallback);
+      return fallback;
+    }
   }
 
   async function refreshMe() {
-    const data = await api('/auth/me');
-    setUser(data.user);
-    setCompany(data.company);
-    return data;
+    try {
+      const data = await api.getCurrentUser();
+      setUser(data.user);
+      setCompany(data.company);
+      return data;
+    } catch (err) {
+      setAuthToken(null);
+      setUser(null);
+      throw err;
+    }
   }
 
   useEffect(() => {
     (async () => {
       try {
         await refreshStatus();
-        if (getToken()) {
+        if (getAuthToken()) {
           await refreshMe();
         }
       } catch (err) {
-        setToken(null);
+        setAuthToken(null);
         setUser(null);
       } finally {
         setLoading(false);
@@ -39,11 +53,8 @@ export function AuthProvider({ children }) {
   }, []);
 
   async function login(email, password) {
-    const data = await api('/auth/login', {
-      method: 'POST',
-      body: JSON.stringify({ email, password })
-    });
-    setToken(data.token);
+    const data = await api.login({ email, password });
+    setAuthToken(data.token);
     setUser(data.user);
     setCompany(data.company);
     await refreshStatus();
@@ -51,11 +62,8 @@ export function AuthProvider({ children }) {
   }
 
   async function firstRunSetup(payload) {
-    const data = await api('/auth/first-run-setup', {
-      method: 'POST',
-      body: JSON.stringify(payload)
-    });
-    setToken(data.token);
+    const data = await api.firstRunSetup(payload);
+    setAuthToken(data.token);
     setUser(data.user);
     setCompany(data.company);
     await refreshStatus();
@@ -63,17 +71,14 @@ export function AuthProvider({ children }) {
   }
 
   async function logout() {
-    setToken(null);
+    setAuthToken(null);
     setUser(null);
     setCompany(null);
   }
 
   async function changePassword(currentPassword, newPassword) {
-    const data = await api('/auth/change-password', {
-      method: 'POST',
-      body: JSON.stringify({ currentPassword, newPassword })
-    });
-    setToken(data.token);
+    const data = await api.changePassword({ currentPassword, newPassword });
+    setAuthToken(data.token);
     await refreshMe();
     return data;
   }

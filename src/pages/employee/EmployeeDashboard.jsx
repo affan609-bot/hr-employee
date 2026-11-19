@@ -4,7 +4,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { api } from '../../api';
 import CameraAttendanceModal from '../../components/CameraAttendanceModal';
 import {
-  Clock, CheckCircle2, AlertTriangle, Calendar,
+  Clock, CheckCircle2, AlertTriangle, Calendar, AlertCircle,
   FileText, Sparkles, Camera, Globe, ArrowRight,
   TrendingUp, Download, RefreshCw, Bell
 } from 'lucide-react';

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { api } from '../../api';
 import CameraAttendanceModal from '../../components/CameraAttendanceModal';
 import {
-  Clock, Calendar, CheckCircle2, AlertTriangle,
+  Clock, Calendar, CheckCircle2, AlertTriangle, AlertCircle,
   RefreshCw, Camera, Globe, Plus, Edit3, X, Check
 } from 'lucide-react';
 
