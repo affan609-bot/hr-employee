@@ -47,7 +47,7 @@ router.post('/apply', authenticate, async (req, res) => {
     }
 
     const { leaveTypeId, startDate, endDate, reason } = req.body;
-    const ip = req.ip || req.headers['x-forwarded-for'] || '127.0.0.1';
+    const ip = (req.headers && req.headers['x-forwarded-for']) || (req.socket && req.socket.remoteAddress) || '127.0.0.1';
 
     const leave = await applyLeave({
       employeeId,
@@ -70,7 +70,7 @@ router.post('/apply', authenticate, async (req, res) => {
 router.post('/:id/cancel', authenticate, (req, res) => {
   try {
     const employeeId = req.user.role === 'employee' ? req.user.employeeId : req.body.employeeId;
-    const ip = req.ip || req.headers['x-forwarded-for'] || '127.0.0.1';
+    const ip = (req.headers && req.headers['x-forwarded-for']) || (req.socket && req.socket.remoteAddress) || '127.0.0.1';
 
     const cancelled = cancelLeave({
       id: req.params.id,
@@ -89,7 +89,7 @@ router.post('/:id/cancel', authenticate, (req, res) => {
 router.post('/:id/review', authenticate, requireRole('hr', 'admin'), (req, res) => {
   try {
     const { status, reviewComment } = req.body;
-    const ip = req.ip || req.headers['x-forwarded-for'] || '127.0.0.1';
+    const ip = (req.headers && req.headers['x-forwarded-for']) || (req.socket && req.socket.remoteAddress) || '127.0.0.1';
 
     const reviewed = reviewLeave({
       id: req.params.id,

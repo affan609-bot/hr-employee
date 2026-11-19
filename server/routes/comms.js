@@ -26,7 +26,7 @@ router.get('/announcements', authenticate, (req, res) => {
 router.post('/announcements', authenticate, requireRole('admin', 'hr'), (req, res) => {
   try {
     const { title, content, priority } = req.body;
-    const ip = req.ip || req.headers['x-forwarded-for'] || '127.0.0.1';
+    const ip = (req.headers && req.headers['x-forwarded-for']) || (req.socket && req.socket.remoteAddress) || '127.0.0.1';
 
     const ann = createAnnouncement({
       title,

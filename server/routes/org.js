@@ -17,7 +17,7 @@ router.get('/departments', authenticate, (req, res) => {
 
 router.post('/departments', authenticate, requireRole('admin'), (req, res) => {
   try {
-    const ip = req.ip || req.headers['x-forwarded-for'] || '127.0.0.1';
+    const ip = (req.headers && req.headers['x-forwarded-for']) || (req.socket && req.socket.remoteAddress) || '127.0.0.1';
     const dept = createDepartment(req.body, req.user, ip);
     res.status(201).json(dept);
   } catch (err) {
@@ -27,7 +27,7 @@ router.post('/departments', authenticate, requireRole('admin'), (req, res) => {
 
 router.delete('/departments/:id', authenticate, requireRole('admin'), (req, res) => {
   try {
-    const ip = req.ip || req.headers['x-forwarded-for'] || '127.0.0.1';
+    const ip = (req.headers && req.headers['x-forwarded-for']) || (req.socket && req.socket.remoteAddress) || '127.0.0.1';
     const result = deleteDepartment(req.params.id, req.user, ip);
     res.json(result);
   } catch (err) {
@@ -42,7 +42,7 @@ router.get('/designations', authenticate, (req, res) => {
 
 router.post('/designations', authenticate, requireRole('admin'), (req, res) => {
   try {
-    const ip = req.ip || req.headers['x-forwarded-for'] || '127.0.0.1';
+    const ip = (req.headers && req.headers['x-forwarded-for']) || (req.socket && req.socket.remoteAddress) || '127.0.0.1';
     const desig = createDesignation(req.body, req.user, ip);
     res.status(201).json(desig);
   } catch (err) {
@@ -52,7 +52,7 @@ router.post('/designations', authenticate, requireRole('admin'), (req, res) => {
 
 router.delete('/designations/:id', authenticate, requireRole('admin'), (req, res) => {
   try {
-    const ip = req.ip || req.headers['x-forwarded-for'] || '127.0.0.1';
+    const ip = (req.headers && req.headers['x-forwarded-for']) || (req.socket && req.socket.remoteAddress) || '127.0.0.1';
     const result = deleteDesignation(req.params.id, req.user, ip);
     res.json(result);
   } catch (err) {
@@ -67,7 +67,7 @@ router.get('/leave-types', authenticate, (req, res) => {
 
 router.put('/leave-types/:id', authenticate, requireRole('admin'), (req, res) => {
   try {
-    const ip = req.ip || req.headers['x-forwarded-for'] || '127.0.0.1';
+    const ip = (req.headers && req.headers['x-forwarded-for']) || (req.socket && req.socket.remoteAddress) || '127.0.0.1';
     const updated = updateLeaveType(req.params.id, req.body, req.user, ip);
     res.json(updated);
   } catch (err) {
@@ -82,7 +82,7 @@ router.get('/holidays', authenticate, (req, res) => {
 
 router.post('/holidays', authenticate, requireRole('admin'), (req, res) => {
   try {
-    const ip = req.ip || req.headers['x-forwarded-for'] || '127.0.0.1';
+    const ip = (req.headers && req.headers['x-forwarded-for']) || (req.socket && req.socket.remoteAddress) || '127.0.0.1';
     const holiday = createHoliday(req.body, req.user, ip);
     res.status(201).json(holiday);
   } catch (err) {
@@ -92,7 +92,7 @@ router.post('/holidays', authenticate, requireRole('admin'), (req, res) => {
 
 router.delete('/holidays/:id', authenticate, requireRole('admin'), (req, res) => {
   try {
-    const ip = req.ip || req.headers['x-forwarded-for'] || '127.0.0.1';
+    const ip = (req.headers && req.headers['x-forwarded-for']) || (req.socket && req.socket.remoteAddress) || '127.0.0.1';
     const result = deleteHoliday(req.params.id, req.user, ip);
     res.json(result);
   } catch (err) {
@@ -107,7 +107,7 @@ router.get('/users', authenticate, requireRole('admin'), (req, res) => {
 
 router.post('/users/hr', authenticate, requireRole('admin'), async (req, res) => {
   try {
-    const ip = req.ip || req.headers['x-forwarded-for'] || '127.0.0.1';
+    const ip = (req.headers && req.headers['x-forwarded-for']) || (req.socket && req.socket.remoteAddress) || '127.0.0.1';
     const newHR = await createHRUser(req.body, req.user, ip);
     res.status(201).json(newHR);
   } catch (err) {
@@ -117,7 +117,7 @@ router.post('/users/hr', authenticate, requireRole('admin'), async (req, res) =>
 
 router.patch('/users/:id/status', authenticate, requireRole('admin'), (req, res) => {
   try {
-    const ip = req.ip || req.headers['x-forwarded-for'] || '127.0.0.1';
+    const ip = (req.headers && req.headers['x-forwarded-for']) || (req.socket && req.socket.remoteAddress) || '127.0.0.1';
     const result = toggleUserStatus(req.params.id, req.user, ip);
     res.json(result);
   } catch (err) {
@@ -127,7 +127,7 @@ router.patch('/users/:id/status', authenticate, requireRole('admin'), (req, res)
 
 router.post('/users/:id/reset-password', authenticate, requireRole('admin'), async (req, res) => {
   try {
-    const ip = req.ip || req.headers['x-forwarded-for'] || '127.0.0.1';
+    const ip = (req.headers && req.headers['x-forwarded-for']) || (req.socket && req.socket.remoteAddress) || '127.0.0.1';
     const result = await resetUserPassword(req.params.id, req.body.temporaryPassword, req.user, ip);
     res.json(result);
   } catch (err) {

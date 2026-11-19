@@ -14,7 +14,7 @@ router.get('/settings', authenticate, requireRole('admin', 'hr'), (req, res) => 
 // Update Company Settings (Admin ONLY)
 router.put('/settings', authenticate, requireRole('admin'), (req, res) => {
   try {
-    const ip = req.ip || req.headers['x-forwarded-for'] || '127.0.0.1';
+    const ip = (req.headers && req.headers['x-forwarded-for']) || (req.socket && req.socket.remoteAddress) || '127.0.0.1';
     const updated = updateCompanySettings(req.body, req.user, ip);
     res.json({ message: 'Company settings updated successfully.', company: updated });
   } catch (err) {

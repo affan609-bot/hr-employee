@@ -21,7 +21,7 @@ router.post('/check-in', authenticate, async (req, res) => {
     }
 
     const { source = 'web', location, faceData } = req.body;
-    const ip = req.ip || req.headers['x-forwarded-for'] || '127.0.0.1';
+    const ip = (req.headers && req.headers['x-forwarded-for']) || (req.socket && req.socket.remoteAddress) || '127.0.0.1';
 
     const record = await checkIn({
       employeeId,
@@ -47,7 +47,7 @@ router.post('/check-out', authenticate, async (req, res) => {
       return res.status(400).json({ error: 'No employee ID provided or associated with account.' });
     }
 
-    const ip = req.ip || req.headers['x-forwarded-for'] || '127.0.0.1';
+    const ip = (req.headers && req.headers['x-forwarded-for']) || (req.socket && req.socket.remoteAddress) || '127.0.0.1';
     const record = await checkOut({
       employeeId,
       actor: req.user,
@@ -106,7 +106,7 @@ router.post('/corrections', authenticate, (req, res) => {
     }
 
     const { date, requestedCheckIn, requestedCheckOut, reason } = req.body;
-    const ip = req.ip || req.headers['x-forwarded-for'] || '127.0.0.1';
+    const ip = (req.headers && req.headers['x-forwarded-for']) || (req.socket && req.socket.remoteAddress) || '127.0.0.1';
 
     const corr = requestCorrection({
       employeeId,
@@ -139,7 +139,7 @@ router.get('/corrections', authenticate, (req, res) => {
 router.post('/corrections/:id/review', authenticate, requireRole('hr', 'admin'), (req, res) => {
   try {
     const { status, reviewComment } = req.body;
-    const ip = req.ip || req.headers['x-forwarded-for'] || '127.0.0.1';
+    const ip = (req.headers && req.headers['x-forwarded-for']) || (req.socket && req.socket.remoteAddress) || '127.0.0.1';
 
     const reviewed = reviewCorrection({
       id: req.params.id,

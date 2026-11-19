@@ -88,7 +88,7 @@ router.get('/:id/360', authenticate, (req, res) => {
 // Register Employee (creates login with temporary password) (HR and Admin)
 router.post('/', authenticate, requireRole('admin', 'hr'), async (req, res) => {
   try {
-    const ip = req.ip || req.headers['x-forwarded-for'] || '127.0.0.1';
+    const ip = (req.headers && req.headers['x-forwarded-for']) || (req.socket && req.socket.remoteAddress) || '127.0.0.1';
     const result = await registerEmployee(req.body, req.user, ip);
     res.status(201).json(result);
   } catch (err) {
@@ -103,7 +103,7 @@ router.put('/:id', authenticate, (req, res) => {
       return res.status(403).json({ error: 'Unauthorized to update another employee profile.' });
     }
 
-    const ip = req.ip || req.headers['x-forwarded-for'] || '127.0.0.1';
+    const ip = (req.headers && req.headers['x-forwarded-for']) || (req.socket && req.socket.remoteAddress) || '127.0.0.1';
     const updated = updateEmployee(req.params.id, req.body, req.user, ip);
     res.json(updated);
   } catch (err) {
@@ -128,7 +128,7 @@ router.post('/csv-import', authenticate, requireRole('admin', 'hr'), upload.sing
       .on('data', (data) => rows.push(data))
       .on('end', async () => {
         try {
-          const ip = req.ip || req.headers['x-forwarded-for'] || '127.0.0.1';
+          const ip = (req.headers && req.headers['x-forwarded-for']) || (req.socket && req.socket.remoteAddress) || '127.0.0.1';
           const report = await validateAndImportCSV(rows, dryRun, req.user, ip);
           res.json(report);
         } catch (innerErr) {

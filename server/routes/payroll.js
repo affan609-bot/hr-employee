@@ -40,7 +40,7 @@ router.post('/draft', authenticate, requireRole('admin', 'hr'), (req, res) => {
     const { month } = req.body;
     if (!month) return res.status(400).json({ error: "Month parameter ('YYYY-MM') is required." });
 
-    const ip = req.ip || req.headers['x-forwarded-for'] || '127.0.0.1';
+    const ip = (req.headers && req.headers['x-forwarded-for']) || (req.socket && req.socket.remoteAddress) || '127.0.0.1';
     const draft = generatePayrollDraft(month, req.user, ip);
     res.json(draft);
   } catch (err) {
@@ -54,7 +54,7 @@ router.post('/finalize', authenticate, requireRole('admin'), (req, res) => {
     const { month } = req.body;
     if (!month) return res.status(400).json({ error: "Month parameter ('YYYY-MM') is required." });
 
-    const ip = req.ip || req.headers['x-forwarded-for'] || '127.0.0.1';
+    const ip = (req.headers && req.headers['x-forwarded-for']) || (req.socket && req.socket.remoteAddress) || '127.0.0.1';
     const finalized = finalizePayroll(month, req.user, ip);
     res.json(finalized);
   } catch (err) {

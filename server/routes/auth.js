@@ -25,7 +25,7 @@ router.post('/first-run-setup', async (req, res) => {
       return res.status(400).json({ error: 'Company name, admin email, and admin password are required.' });
     }
 
-    const ip = req.ip || req.headers['x-forwarded-for'] || '127.0.0.1';
+    const ip = (req.headers && req.headers['x-forwarded-for']) || (req.socket && req.socket.remoteAddress) || '127.0.0.1';
     const result = await setupFirstRun({
       companyName,
       adminName,
@@ -80,7 +80,7 @@ router.post('/login', async (req, res) => {
     const token = generateToken(user);
     const company = db.getCompany();
 
-    const ip = req.ip || req.headers['x-forwarded-for'] || '127.0.0.1';
+    const ip = (req.headers && req.headers['x-forwarded-for']) || (req.socket && req.socket.remoteAddress) || '127.0.0.1';
     logAudit({
       actorId: user.id,
       actorName: user.name,
@@ -163,7 +163,7 @@ router.post('/change-password', authenticate, async (req, res) => {
     user.mustChangePassword = false;
     db.set('users', users);
 
-    const ip = req.ip || req.headers['x-forwarded-for'] || '127.0.0.1';
+    const ip = (req.headers && req.headers['x-forwarded-for']) || (req.socket && req.socket.remoteAddress) || '127.0.0.1';
     logAudit({
       actorId: user.id,
       actorName: user.name,
