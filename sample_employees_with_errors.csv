@@ -1,0 +1,6 @@
+employeeCode,firstName,lastName,email,department,basicSalary,phone,address,gender,designation,joiningDate
+EMP-101,Duplicate,Code,dup.code@company.com,Engineering,100000,+92 300 0000001,Karachi,male,Developer,2026-01-01
+EMP-201,,MissingFirstName,missing.first@company.com,Engineering,100000,+92 300 0000002,Karachi,female,Developer,2026-01-01
+EMP-202,Bad,Email,not-a-valid-email,Engineering,100000,+92 300 0000003,Karachi,male,Developer,2026-01-01
+EMP-203,Unknown,Dept,unknown.dept@company.com,NonExistentDepartment,100000,+92 300 0000004,Karachi,female,Developer,2026-01-01
+EMP-204,Negative,Salary,neg.salary@company.com,Engineering,-50000,+92 300 0000005,Karachi,male,Developer,2026-01-01

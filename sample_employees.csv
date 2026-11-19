@@ -1,0 +1,6 @@
+employeeCode,firstName,lastName,email,department,basicSalary,phone,address,gender,designation,joiningDate
+EMP-101,Ali,Raza,ali.raza@company.com,Engineering,150000,+92 300 1112233,Gulshan-e-Iqbal Karachi,male,Senior Software Engineer,2026-01-15
+EMP-102,Fatima,Zahra,fatima.zahra@company.com,Human Resources,120000,+92 321 4445566,Clifton Karachi,female,HR Specialist,2026-02-01
+EMP-103,Usman,Tariq,usman.tariq@company.com,Engineering,90000,+92 333 7778899,PECHS Karachi,male,Junior Developer,2026-03-10
+EMP-104,Ayesha,Malik,ayesha.malik@company.com,Marketing,110000,+92 345 9990011,DHA Phase 6 Karachi,female,Marketing Lead,2026-02-15
+EMP-105,Bilal,Ahmed,bilal.ahmed@company.com,Sales,100000,+92 312 3334455,North Nazimabad Karachi,male,Account Executive,2026-04-01
