@@ -70,20 +70,27 @@ const checkEnvAdminSetup = async () => {
 
 checkEnvAdminSetup().catch(console.error);
 
-// Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/company', companyRoutes);
-app.use('/api/org', orgRoutes);
-app.use('/api/employees', employeeRoutes);
-app.use('/api/attendance', attendanceRoutes);
-app.use('/api/leave', leaveRoutes);
-app.use('/api/payroll', payrollRoutes);
-app.use('/api/dashboards', dashboardRoutes);
-app.use('/api/ai', aiRoutes);
-app.use('/api/comms', commsRoutes);
+// Dual-mount routes (with /api and without /api) for seamless Vercel serverless execution
+const routeModules = [
+  ['/auth', authRoutes],
+  ['/company', companyRoutes],
+  ['/org', orgRoutes],
+  ['/employees', employeeRoutes],
+  ['/attendance', attendanceRoutes],
+  ['/leave', leaveRoutes],
+  ['/payroll', payrollRoutes],
+  ['/dashboards', dashboardRoutes],
+  ['/ai', aiRoutes],
+  ['/comms', commsRoutes]
+];
 
-// Health check
-app.get('/api/health', (req, res) => {
+for (const [prefix, router] of routeModules) {
+  app.use(`/api${prefix}`, router);
+  app.use(prefix, router);
+}
+
+// Health check on both /api/health and /health
+const healthHandler = (req, res) => {
   const company = db.getCompany();
   res.json({
     status: 'ok',
@@ -91,7 +98,10 @@ app.get('/api/health', (req, res) => {
     service: 'HCM Lite API',
     companySetup: company.isSetup
   });
-});
+};
+
+app.get('/api/health', healthHandler);
+app.get('/health', healthHandler);
 
 // Global Error Handler
 app.use((err, req, res, next) => {

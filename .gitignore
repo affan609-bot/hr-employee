@@ -15,6 +15,7 @@ dist-ssr
 # Environment and data
 .env
 server/data/
+.vercel/
 
 # Editor directories and files
 .vscode/*
