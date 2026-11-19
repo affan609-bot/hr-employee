@@ -100,7 +100,7 @@ app.use((err, req, res, next) => {
   res.status(status).json({ error: err.message || 'Internal Server Error' });
 });
 
-if (!process.env.VERCEL && !process.env.VERCEL_ENV) {
+if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL && !process.env.VERCEL_ENV) {
   app.listen(PORT, '0.0.0.0', () => {
     console.log(`========================================`);
     console.log(`  HCM Lite Backend Server Started!      `);
