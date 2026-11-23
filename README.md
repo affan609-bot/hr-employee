@@ -1,4 +1,4 @@
-# HCM Lite — AI-Assisted Human Capital Management System
+﻿# HCM Lite — AI-Assisted Human Capital Management System
 
 > **Saylani Hackathon — 24 October 2026, Zaitoon Ashraf IT Park**  
 > Built for Admin, HR Managers, and Employees.
@@ -140,6 +140,6 @@ If you have initialized the system with default values:
 - **Admin:** `admin@company.com` / `AdminPass123!`
 - **HR:** `hr@company.com` / `HRpass123!`
 - **Employee:** Registered email / `TempPass123!` (or new personal password)
-#   h r - e m p l o y e e  
- #   h r - e m p l o y e e  
- "# hr-employee" 
+# hr-employee
+# hr-employee
+"# hr-employee" 
