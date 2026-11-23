@@ -137,8 +137,8 @@ app.get('/', (req, res) => {
 
 // Global Error Handler
 app.use((err, req, res, next) => {
-  console.error('API Error:', err);
   const status = err.status || 500;
+  if (status >= 500) console.error('API Error:', err);
   res.status(status).json({ error: err.message || 'Internal Server Error' });
 });
 
