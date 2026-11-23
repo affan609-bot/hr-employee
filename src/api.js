@@ -14,6 +14,12 @@ export const setToken = setAuthToken;
 
 export async function apiRequest(endpoint, options = {}) {
   const token = getAuthToken();
+  const isPublic = endpoint.includes('/auth/status') || endpoint.includes('/auth/login') || endpoint.includes('/auth/first-run-setup') || endpoint.includes('/health');
+  if (!token && !isPublic && typeof window !== 'undefined' && window.location.pathname !== '/login' && window.location.pathname !== '/setup') {
+    window.location.href = '/login';
+    throw new Error('Authentication required. Please sign in.');
+  }
+
   const headers = {
     ...(options.headers || {})
   };
@@ -42,10 +48,13 @@ export async function apiRequest(endpoint, options = {}) {
     throw new Error('Backend server is not reachable. Please ensure the server is running on port 5000.');
   }
 
-  // On 401, purge stale token so future requests aren't permanently broken
+  // On 401, purge stale token and redirect to login so the UI never stalls
   if (response.status === 401) {
     if (!endpoint.includes('/auth/login') && !endpoint.includes('/auth/status')) {
       setAuthToken(null);
+      if (typeof window !== 'undefined' && window.location.pathname !== '/login' && window.location.pathname !== '/setup') {
+        window.location.href = '/login';
+      }
     }
   }
 
