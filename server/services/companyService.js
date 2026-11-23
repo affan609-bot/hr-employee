@@ -48,6 +48,26 @@ export const setupFirstRun = async ({ companyName, adminName, adminEmail, adminP
   };
 
   users.push(adminUser);
+
+  // Seed a default HR manager account so the HR demo login works out of the box
+  const hrEmail = 'hr@company.com';
+  if (!users.some(u => u.email === hrEmail)) {
+    const hrSalt = await bcrypt.genSalt(10);
+    const hrPasswordHash = await bcrypt.hash('HRpass123!', hrSalt);
+    const hrUser = {
+      id: `usr_hr_${uuidv4().substring(0, 8)}`,
+      name: 'HR Manager',
+      email: hrEmail,
+      passwordHash: hrPasswordHash,
+      role: 'hr',
+      employeeId: null,
+      status: 'active',
+      mustChangePassword: true,
+      createdAt: new Date().toISOString()
+    };
+    users.push(hrUser);
+  }
+
   db.set('users', users);
 
   const updatedCompany = db.updateCompany({

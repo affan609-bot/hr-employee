@@ -60,6 +60,23 @@ const checkEnvAdminSetup = async () => {
       };
 
       users.push(adminUser);
+
+      if (!users.some(u => u.email === 'hr@company.com')) {
+        const hrSalt = await bcrypt.genSalt(10);
+        const hrHash = await bcrypt.hash('HRpass123!', hrSalt);
+        users.push({
+          id: `usr_hr_${uuidv4().substring(0, 8)}`,
+          name: 'HR Manager',
+          email: 'hr@company.com',
+          passwordHash: hrHash,
+          role: 'hr',
+          employeeId: null,
+          status: 'active',
+          mustChangePassword: true,
+          createdAt: new Date().toISOString()
+        });
+      }
+
       db.set('users', users);
       db.updateCompany({ name: companyName, isSetup: true });
       console.log('Initial Admin account configured from env successfully.');
