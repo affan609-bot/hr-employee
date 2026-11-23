@@ -7,7 +7,7 @@ import {
   FileText, Clock, UserCheck
 } from 'lucide-react';
 
-export default function Sidebar() {
+export default function Sidebar({ isOpen = false, onClose }) {
   const { user } = useAuth();
   if (!user) return null;
 
@@ -45,7 +45,11 @@ export default function Sidebar() {
   const links = user.role === 'admin' ? adminNav : user.role === 'hr' ? hrNav : employeeNav;
 
   return (
-    <aside className="w-64 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col shrink-0 min-h-[calc(100vh-4rem)]">
+    <aside
+      className={`fixed lg:static inset-y-0 left-0 z-50 w-64 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col shrink-0 min-h-[calc(100vh-4rem)] transform transition-transform duration-200 ease-in-out ${
+        isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+      }`}
+    >
       <div className="p-4 flex-1 space-y-1">
         <p className="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2">
           {user.role} workspace
@@ -56,6 +60,7 @@ export default function Sidebar() {
             <NavLink
               key={item.to}
               to={item.to}
+              onClick={() => onClose && onClose()}
               className={({ isActive }) =>
                 `flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all ${
                   isActive

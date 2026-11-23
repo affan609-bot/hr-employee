@@ -79,15 +79,24 @@ function MainLayout() {
   const location = useLocation();
   const [isAIOpen, setIsAIOpen] = useState(false);
   const [prefilledSmartLeave, setPrefilledSmartLeave] = useState(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const isPublicPage = location.pathname === '/login' || location.pathname === '/setup';
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col">
-      {!isPublicPage && <Navbar onOpenAI={() => setIsAIOpen(true)} />}
+      {!isPublicPage && <Navbar onOpenAI={() => setIsAIOpen(true)} onToggleSidebar={() => setSidebarOpen(true)} />}
 
-      <div className="flex-1 flex overflow-hidden">
-        {!isPublicPage && user && <Sidebar />}
+      <div className="flex-1 flex overflow-hidden relative">
+        {!isPublicPage && user && sidebarOpen && (
+          <div
+            className="fixed inset-0 bg-slate-900/50 z-40 lg:hidden"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
+        {!isPublicPage && user && (
+          <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+        )}
 
         <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
           <Routes>

@@ -4,10 +4,10 @@ import { useAuth } from '../contexts/AuthContext';
 import { useDarkMode } from '../hooks/useDarkMode';
 import {
   Bell, Sun, Moon, LogOut, User, Sparkles, Building2,
-  ShieldAlert, CheckCircle2, AlertTriangle, Info, Clock
+  ShieldAlert, CheckCircle2, AlertTriangle, Info, Clock, Menu
 } from 'lucide-react';
 
-export default function Navbar({ onOpenAI }) {
+export default function Navbar({ onOpenAI, onToggleSidebar }) {
   const { user, company, logout, notifications, unreadCount, markAllNotificationsRead } = useAuth();
   const { isDark, toggleDarkMode } = useDarkMode();
   const [showNotifs, setShowNotifs] = useState(false);
@@ -36,6 +36,17 @@ export default function Navbar({ onOpenAI }) {
     <header className="sticky top-0 z-40 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
+          {/* Mobile Sidebar Toggle */}
+          {user && (
+            <button
+              onClick={onToggleSidebar}
+              className="lg:hidden p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+              title="Open menu"
+            >
+              <Menu className="w-5 h-5" />
+            </button>
+          )}
+
           {/* Logo & Company Name */}
           <div className="flex items-center gap-3">
             <Link to="/" className="flex items-center gap-2.5 group">
