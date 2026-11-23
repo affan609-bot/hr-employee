@@ -1,13 +1,13 @@
 const BASE_URL = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace(/\/+$/, '') : '';
 
-export const getAuthToken = () => localStorage.getItem('hcm_token');
+export const getAuthToken = () => localStorage.getItem('qs_token');
 export const getToken = getAuthToken;
 
 export const setAuthToken = (token) => {
   if (token) {
-    localStorage.setItem('hcm_token', token);
+    localStorage.setItem('qs_token', token);
   } else {
-    localStorage.removeItem('hcm_token');
+    localStorage.removeItem('qs_token');
   }
 };
 export const setToken = setAuthToken;

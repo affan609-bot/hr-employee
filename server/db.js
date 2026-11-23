@@ -6,7 +6,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const DATA_DIR = process.env.VERCEL ? path.join('/tmp', 'quickserve-data') : path.join(__dirname, 'data');
-const DB_FILE = path.join(DATA_DIR, 'hcm_data.json');
+const DB_FILE = path.join(DATA_DIR, 'quickserve_data.json');
 
 try {
   if (!fs.existsSync(DATA_DIR)) {
