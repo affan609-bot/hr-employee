@@ -2,6 +2,7 @@ import bcrypt from 'bcryptjs';
 import { v4 as uuidv4 } from 'uuid';
 import db from '../db.js';
 import { logAudit } from './auditService.js';
+import { generateToken } from '../middleware/auth.js';
 
 export const getCompanyStatus = () => {
   const company = db.getCompany();
@@ -29,7 +30,8 @@ export const setupFirstRun = async ({ companyName, adminName, adminEmail, adminP
   const company = db.getCompany();
 
   if (company.isSetup && adminExists) {
-    throw new Error('System is already setup. First-run setup is locked.');
+    const existingAdmin = users.find(u => u.role === 'admin');
+    return { adminUser: existingAdmin, company, token: generateToken(existingAdmin), alreadySetup: true };
   }
 
   const salt = await bcrypt.genSalt(10);
