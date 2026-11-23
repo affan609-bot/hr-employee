@@ -1,7 +1,7 @@
 import http from 'http';
 
 async function runTests() {
-  console.log('🧪 Starting End-to-End System Test for HCM Lite...\n');
+  console.log('🧪 Starting End-to-End System Test for QuickServe...\n');
 
   const BASE = 'http://localhost:5000/api';
 
@@ -29,7 +29,7 @@ async function runTests() {
   const setupRes = await req('/auth/first-run-setup', {
     method: 'POST',
     body: JSON.stringify({
-      companyName: 'Saylani Enterprise Solutions',
+      companyName: 'Affanverse Solutions',
       adminName: 'Super Admin',
       adminEmail: 'admin@company.com',
       adminPassword: 'AdminPass123!'

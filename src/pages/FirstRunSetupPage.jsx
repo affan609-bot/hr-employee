@@ -7,7 +7,7 @@ export default function FirstRunSetupPage() {
   const { firstRunSetup } = useAuth();
   const navigate = useNavigate();
 
-  const [companyName, setCompanyName] = useState('Saylani Enterprise Solutions');
+  const [companyName, setCompanyName] = useState('Affanverse Solutions');
   const [adminName, setAdminName] = useState('System Administrator');
   const [adminEmail, setAdminEmail] = useState('admin@company.com');
   const [adminPassword, setAdminPassword] = useState('AdminPass123!');

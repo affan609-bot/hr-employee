@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import db from '../db.js';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'hcm_lite_jwt_super_secret_key_2026';
+const JWT_SECRET = process.env.JWT_SECRET || 'quickserve_jwt_super_secret_key_2026';
 
 export const generateToken = (user) => {
   return jwt.sign(

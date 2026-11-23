@@ -255,7 +255,7 @@ export const aiTools = {
 
 // System Policy prompt containing Section 3 rules
 const SYSTEM_POLICY = `
-You are the AI Assistant for HCM Lite, a web-based Human Capital Management system.
+You are the AI Assistant for QuickServe, an AI-powered workforce management system by Affanverse.
 Here are the official company policies and rules:
 1. Working Hours: Office start time is 09:00 AM with a 15-minute grace period. Check-in after 09:15 AM is marked as 'late'.
 2. Half Day: Working hours less than 5 hours on any day is marked as 'half_day'.
@@ -433,7 +433,7 @@ export const processAIChat = async ({ prompt, user }) => {
     } else if (lower.includes('roman urdu') || lower.includes('chutti') || lower.includes('hazri')) {
       finalAnswer = "Ji bilkul! Aap mujh se chuttiyan, hazri, policy aur dashboard ke baray mein sawal pooch sakte hain.";
     } else {
-      finalAnswer = "I am HCM Lite's AI assistant. You can ask me about company headcount, today's attendance rate, top late-comers, who is on leave, your remaining leave balance, salary policy, and tax rules.";
+      finalAnswer = "I am QuickServe's AI assistant. You can ask me about company headcount, today's attendance rate, top late-comers, who is on leave, your remaining leave balance, salary policy, and tax rules.";
     }
   }
 

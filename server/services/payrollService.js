@@ -280,7 +280,7 @@ export const streamPayslipPDF = (payslip, company, res) => {
   doc.pipe(res);
 
   // Header
-  doc.fontSize(20).font('Helvetica-Bold').text(company.name || 'HCM Lite Company', { align: 'center' });
+  doc.fontSize(20).font('Helvetica-Bold').text(company.name || 'QuickServe Company', { align: 'center' });
   doc.fontSize(12).font('Helvetica').text('Confidential Employee Payslip', { align: 'center' });
   doc.moveDown(0.5);
   doc.fontSize(10).font('Helvetica-Oblique').text(`Payroll Month: ${payslip.month}`, { align: 'center' });

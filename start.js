@@ -5,7 +5,7 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-console.log('🚀 Starting HCM Lite System (Backend & Frontend)...');
+console.log('🚀 Starting QuickServe System (Backend & Frontend)...');
 
 const isWindows = process.platform === 'win32';
 const npmCmd = isWindows ? 'npm.cmd' : 'npm';
@@ -38,7 +38,7 @@ vite.on('exit', (code) => {
 });
 
 const cleanup = () => {
-  console.log('\n🛑 Shutting down HCM Lite servers...');
+  console.log('\n🛑 Shutting down QuickServe servers...');
   try { server.kill(); } catch (e) {}
   try { vite.kill(); } catch (e) {}
   process.exit(0);

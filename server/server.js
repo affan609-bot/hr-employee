@@ -35,7 +35,7 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 const checkEnvAdminSetup = async () => {
   const adminEmail = process.env.ADMIN_EMAIL;
   const adminPassword = process.env.ADMIN_PASSWORD;
-  const companyName = process.env.COMPANY_NAME || 'Saylani Enterprise Solutions';
+  const companyName = process.env.COMPANY_NAME || 'Affanverse Solutions';
 
   if (adminEmail && adminPassword) {
     const users = db.get('users');
@@ -123,7 +123,7 @@ const healthHandler = (req, res) => {
   res.json({
     status: 'ok',
     version: '1.0.0',
-    service: 'HCM Lite API',
+    service: 'QuickServe API',
     companySetup: company.isSetup
   });
 };
@@ -132,7 +132,7 @@ app.get('/api/health', healthHandler);
 app.get('/health', healthHandler);
 app.get('/api', healthHandler);
 app.get('/', (req, res) => {
-  res.json({ status: 'ok', service: 'HCM Lite API', version: '1.0.0' });
+  res.json({ status: 'ok', service: 'QuickServe API', version: '1.0.0' });
 });
 
 // Global Error Handler
@@ -147,7 +147,7 @@ const isDirectRun = process.argv[1] && (process.argv[1].endsWith('server.js') ||
 if (isDirectRun && !process.env.VERCEL && !process.env.VERCEL_ENV) {
   app.listen(PORT, '0.0.0.0', () => {
     console.log(`========================================`);
-    console.log(`  HCM Lite Backend Server Started!      `);
+    console.log(`  QuickServe Backend Server Started!    `);
     console.log(`  URL: http://127.0.0.1:${PORT}         `);
     console.log(`  Port: ${PORT}                         `);
     console.log(`========================================`);
