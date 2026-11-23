@@ -54,9 +54,9 @@ export default function FirstRunSetupPage() {
           <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
             First-Run System Setup
           </span>
-          <h1 className="text-2xl font-extrabold tracking-tight mt-3">Welcome to HCM Lite</h1>
+          <h1 className="text-2xl font-extrabold tracking-tight mt-3">Welcome to QuickServe</h1>
           <p className="text-xs text-slate-400 max-w-md mx-auto mt-1">
-            Initialize your company profile and create the master Administrator account to get started.
+            Initialize your company profile with Affanverse QuickServe and create the master Administrator account to get started.
           </p>
         </div>
 

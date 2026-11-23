@@ -55,10 +55,10 @@ export default function Navbar({ onOpenAI, onToggleSidebar }) {
               </div>
               <div>
                 <span className="font-extrabold text-lg tracking-tight text-slate-900 dark:text-white flex items-center gap-1.5">
-                  HCM <span className="text-indigo-600 dark:text-indigo-400">Lite</span>
+                  Quick<span className="text-indigo-600 dark:text-indigo-400">Serve</span>
                 </span>
                 <p className="text-xs text-slate-400 dark:text-slate-500 font-medium truncate max-w-[150px] sm:max-w-[200px]">
-                  {company?.name || 'Saylani Hackathon'}
+                  {company?.name || 'Affanverse'}
                 </p>
               </div>
             </Link>

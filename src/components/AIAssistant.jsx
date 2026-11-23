@@ -12,7 +12,7 @@ export default function AIAssistant({ isOpen, onClose, onApplySmartLeave }) {
     {
       id: 'welcome',
       role: 'assistant',
-      text: `Hello ${user?.name || ''}! I am your HCM Lite AI Assistant. I can answer questions from real database records, clarify company HR policies, summarize dashboard metrics, or pre-fill smart leave requests. How can I help you today?`,
+      text: `Hello ${user?.name || ''}! I am your QuickServe AI Assistant. I can answer questions from real database records, clarify company HR policies, summarize dashboard metrics, or pre-fill smart leave requests. How can I help you today?`,
       toolUsed: null,
       aiGenerated: true
     }
