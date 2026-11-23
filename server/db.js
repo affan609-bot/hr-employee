@@ -70,7 +70,7 @@ class Database {
     } catch (err) {
       console.error('Error loading DB file, initializing fresh:', err);
     }
-    this.save(defaultData);
+    // Return clean default data without writing to disk on cold start
     return JSON.parse(JSON.stringify(defaultData));
   }
 

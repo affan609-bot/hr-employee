@@ -67,7 +67,19 @@ const checkEnvAdminSetup = async () => {
   }
 };
 
-checkEnvAdminSetup().catch(console.error);
+// Lazy initialization for environment-based Admin setup (runs on first request, safe for serverless)
+let envSetupDone = false;
+app.use(async (req, res, next) => {
+  if (!envSetupDone) {
+    envSetupDone = true;
+    try {
+      await checkEnvAdminSetup();
+    } catch (err) {
+      console.error('checkEnvAdminSetup error:', err);
+    }
+  }
+  next();
+});
 
 // Dual-mount routes (with /api and without /api) for seamless Vercel serverless execution
 const routeModules = [
@@ -101,6 +113,10 @@ const healthHandler = (req, res) => {
 
 app.get('/api/health', healthHandler);
 app.get('/health', healthHandler);
+app.get('/api', healthHandler);
+app.get('/', (req, res) => {
+  res.json({ status: 'ok', service: 'HCM Lite API', version: '1.0.0' });
+});
 
 // Global Error Handler
 app.use((err, req, res, next) => {
@@ -109,7 +125,9 @@ app.use((err, req, res, next) => {
   res.status(status).json({ error: err.message || 'Internal Server Error' });
 });
 
-if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL && !process.env.VERCEL_ENV) {
+// Only bind port when executed directly as standalone server (never inside Vercel serverless function)
+const isDirectRun = process.argv[1] && (process.argv[1].endsWith('server.js') || process.argv[1].endsWith('start.js'));
+if (isDirectRun && !process.env.VERCEL && !process.env.VERCEL_ENV) {
   app.listen(PORT, '0.0.0.0', () => {
     console.log(`========================================`);
     console.log(`  HCM Lite Backend Server Started!      `);

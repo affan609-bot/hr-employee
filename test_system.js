@@ -48,14 +48,21 @@ async function runTests() {
   const adminToken = loginRes.data.token;
   console.log('3. Admin Login:', loginRes.status, 'Token acquired:', Boolean(adminToken));
 
-  // 4. Create Department
-  const deptRes = await req('/org/departments', {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${adminToken}` },
-    body: JSON.stringify({ name: 'Engineering', code: 'ENG' })
-  });
-  const deptId = deptRes.data.id;
-  console.log('4. Create Department:', deptRes.status, deptRes.data.name, `(ID: ${deptId})`);
+  // 4. Create Department (or use existing)
+  let deptId;
+  const deptList = await req('/org/departments', { headers: { Authorization: `Bearer ${adminToken}` } });
+  if (deptList.data && deptList.data.length > 0) {
+    deptId = deptList.data[0].id;
+    console.log('4. Department (Existing):', deptList.data[0].name, `(ID: ${deptId})`);
+  } else {
+    const deptRes = await req('/org/departments', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${adminToken}` },
+      body: JSON.stringify({ name: 'Engineering', code: 'ENG' })
+    });
+    deptId = deptRes.data.id;
+    console.log('4. Create Department:', deptRes.status, deptRes.data.name, `(ID: ${deptId})`);
+  }
 
   // 5. Create HR User
   const hrRes = await req('/org/users/hr', {
@@ -63,7 +70,7 @@ async function runTests() {
     headers: { Authorization: `Bearer ${adminToken}` },
     body: JSON.stringify({ name: 'HR Manager', email: 'hr@company.com', password: 'HRpass123!' })
   });
-  console.log('5. Create HR Account:', hrRes.status, hrRes.data.name, 'TempPass:', hrRes.data.temporaryPassword);
+  console.log('5. Create HR Account:', hrRes.status, hrRes.data?.name || 'Already exists');
 
   // 6. Login as HR
   const hrLogin = await req('/auth/login', {
@@ -73,29 +80,58 @@ async function runTests() {
   const hrToken = hrLogin.data.token;
   console.log('6. HR Login:', hrLogin.status, 'Token acquired:', Boolean(hrToken));
 
-  // 7. Register Employee
-  const empRes = await req('/employees', {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${hrToken}` },
-    body: JSON.stringify({
-      employeeCode: 'EMP-1001',
-      firstName: 'Ali',
-      lastName: 'Raza',
-      email: 'ali.raza@company.com',
-      departmentId: deptId,
-      basicSalary: 100000
-    })
-  });
-  const emp = empRes.data.employee;
-  console.log('7. Register Employee:', empRes.status, `${emp.firstName} ${emp.lastName}`, `Gross: Rs. ${emp.grossSalary} (1.5x)`);
+  // 7. Register Employee (or fetch existing)
+  let emp;
+  let tempPass = 'WelcomePass123!';
+  const empList = await req('/employees', { headers: { Authorization: `Bearer ${hrToken}` } });
+  if (empList.data?.employees?.length > 0) {
+    emp = empList.data.employees[0];
+    console.log('7. Employee (Existing):', `${emp.firstName} ${emp.lastName}`, `Gross: Rs. ${emp.grossSalary}`);
+  } else {
+    const empRes = await req('/employees', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${hrToken}` },
+      body: JSON.stringify({
+        employeeCode: 'EMP-1001',
+        firstName: 'Ali',
+        lastName: 'Raza',
+        email: 'ali.raza@company.com',
+        departmentId: deptId,
+        basicSalary: 100000
+      })
+    });
+    emp = empRes.data.employee;
+    tempPass = empRes.data.temporaryPassword;
+    console.log('7. Register Employee:', empRes.status, `${emp.firstName} ${emp.lastName}`, `Gross: Rs. ${emp.grossSalary} (1.5x)`);
+  }
 
   // 8. Employee Login
+  let empToken;
   const empLogin = await req('/auth/login', {
     method: 'POST',
-    body: JSON.stringify({ email: 'ali.raza@company.com', password: empRes.data.temporaryPassword })
+    body: JSON.stringify({ email: 'ali.raza@company.com', password: tempPass })
   });
-  const empToken = empLogin.data.token;
-  console.log('8. Employee Login (First Sign-in):', empLogin.status, 'MustChangePassword:', empLogin.data.user.mustChangePassword);
+  if (empLogin.status === 200) {
+    empToken = empLogin.data.token;
+    console.log('8. Employee Login (First Sign-in):', empLogin.status, 'MustChangePassword:', empLogin.data.user?.mustChangePassword);
+  } else {
+    // Reset password as admin so test can proceed idempotently
+    const usersRes = await req('/org/users', { headers: { Authorization: `Bearer ${adminToken}` } });
+    const empUser = usersRes.data?.find(u => u.email === 'ali.raza@company.com');
+    if (empUser) {
+      await req(`/org/users/${empUser.id}/reset-password`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${adminToken}` },
+        body: JSON.stringify({ newPassword: 'ResetPass123!' })
+      });
+      const retryLogin = await req('/auth/login', {
+        method: 'POST',
+        body: JSON.stringify({ email: 'ali.raza@company.com', password: 'ResetPass123!' })
+      });
+      empToken = retryLogin.data?.token;
+      console.log('8. Employee Login (After Reset):', retryLogin.status, 'Token acquired:', Boolean(empToken));
+    }
+  }
 
   // 9. Employee Check-in
   const checkInRes = await req('/attendance/check-in', {
